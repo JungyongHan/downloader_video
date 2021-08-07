@@ -228,7 +228,7 @@ class LogicAni365(LogicModuleBase):
                 res = session.get(referer)
 
             res = session.post(url, headers=headers, data=data)
-            logger.warning(res.text)
+            #logger.warning(res.text)
             logger.debug('get_json_with_auth_session status_code : %s', res.status_code)
             return res.json(), headers
         except Exception as exception: 
@@ -273,6 +273,7 @@ class Ani365QueueEntity(FfmpegQueueEntity):
             scraper = cfscrape.create_scraper(delay=10)
             text = scraper.get(url, headers=headers).text
             #text = requests.get(url, headers=headers).text
+            logger.warning(text)
             match = re.compile('src\=\"(?P<video_url>http.*?\.m3u8)').search(text)
             if match:
                 tmp = match.group('video_url')
