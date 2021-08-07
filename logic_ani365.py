@@ -270,7 +270,7 @@ class Ani365QueueEntity(FfmpegQueueEntity):
     def make_episode_info(self):
         try:
             url = 'https://www.jetcloud-list.cc/kr/episode/' + self.info['va']
-            scraper = cfscrape.create_scraper()
+            scraper = cfscrape.create_scraper(delay=10)
             text = scraper.get(url, headers=headers).text
             #text = requests.get(url, headers=headers).text
             match = re.compile('src\=\"(?P<video_url>http.*?\.m3u8)').search(text)
