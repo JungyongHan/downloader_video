@@ -271,12 +271,12 @@ class Ani365QueueEntity(FfmpegQueueEntity):
         try:
             url = 'https://www.jetcloud-list.cc/kr/episode/' + self.info['va']
             scraper = cfscrape.create_scraper()
-            text = scraper.get(url, headers=headers).content
+            text = scraper.get(url, headers=headers).text
             #text = requests.get(url, headers=headers).text
             match = re.compile('src\=\"(?P<video_url>http.*?\.m3u8)').search(text)
             if match:
                 tmp = match.group('video_url')
-                m3u8_text = scraper.get(tmp, headers=headers).content.strip()
+                m3u8_text = scraper.get(tmp, headers=headers).text.strip()
                 #m3u8_text = requests.get(tmp, headers=headers).text.strip()
                 self.url = m3u8_text.split('\n')[-1].strip()
                 logger.debug(self.url)
@@ -315,7 +315,7 @@ class Ani365QueueEntity(FfmpegQueueEntity):
             # 2021-07-13 by lapis
             #if not os.path.exists(srt_filepath):
             if self.vtt is not None and not os.path.exists(srt_filepath):
-                vtt_data = scraper.get(self.vtt, headers=LogicAni365.current_headers).content
+                vtt_data = scraper.get(self.vtt, headers=LogicAni365.current_headers).text
                 #vtt_data = requests.get(self.vtt, headers=LogicAni365.current_headers).text
                 srt_data = convert_vtt_to_srt(vtt_data)
                 write_file(srt_data, srt_filepath)
