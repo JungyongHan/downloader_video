@@ -227,7 +227,7 @@ class LogicAni365(LogicModuleBase):
                 res = session.get(referer)
 
             res = session.post(url, headers=headers, data=data)
-            #logger.warning(res.text)
+            logger.warning(res.text)
             logger.debug('get_json_with_auth_session status_code : %s', res.status_code)
             return res.json(), headers
         except Exception as exception: 
