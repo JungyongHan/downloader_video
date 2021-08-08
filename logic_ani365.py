@@ -285,6 +285,7 @@ class Ani365QueueEntity(FfmpegQueueEntity):
             if not buf:
                 break
             data += buf
+            
         client_socket.close()
         return repr(data)
 
@@ -294,10 +295,11 @@ class Ani365QueueEntity(FfmpegQueueEntity):
             scraper = cfscrape.create_scraper(delay=10)
             text = self.socket_request(url)
             #text = requests.get(url, headers=headers).text
-            logger.warning(text)
+            #logger.warning(text)
             match = re.compile('src\=\"(?P<video_url>http.*?\.m3u8)').search(text)
             if match:
                 tmp = match.group('video_url')
+                logger.warning(tmp)
                 m3u8_text = self.socket_request(tmp)
                 #m3u8_text = requests.get(tmp, headers=headers).text.strip()
                 self.url = m3u8_text.split('\n')[-1].strip()
