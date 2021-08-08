@@ -4,6 +4,9 @@
 import os, sys, traceback, re, json, threading
 from datetime import datetime
 import copy
+import socket
+import json
+
 # third-party
 import requests
 import cfscrape
@@ -266,12 +269,30 @@ class Ani365QueueEntity(FfmpegQueueEntity):
             db_entity.status = 'completed'
             db_entity.complated_time = datetime.now()
             db_entity.save()
+            
+    def socket_request(self, url):
+        HOST = '192.168.0.182'
+        PORT = 9000
+        client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        client_socket.connect((HOST, PORT))
+        data = {'mode':'get', 'url':url}
+        client_socket.sendall(str(json.dumps(data)).encode())
+        client_socket.shutdown(socket.SHUT_WR)
+        
+        data = b''
+        while True:
+            buf = client_socket.recv(4096)
+            if not buf:
+                break
+            data += buf
+        client_socket.close()
+        return repr(data)
 
     def make_episode_info(self):
         try:
             url = 'https://www.jetcloud-list.cc/kr/episode/' + self.info['va']
             scraper = cfscrape.create_scraper(delay=10)
-            text = scraper.get(url, headers=headers).text
+            text = self.socket_request(url).text
             #text = requests.get(url, headers=headers).text
             logger.warning(text)
             match = re.compile('src\=\"(?P<video_url>http.*?\.m3u8)').search(text)
