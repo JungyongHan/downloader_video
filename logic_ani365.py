@@ -287,7 +287,8 @@ class Ani365QueueEntity(FfmpegQueueEntity):
             data += buf
             
         client_socket.close()
-        return str(data.decode())
+        
+        return json.loads(data.decode())
     
     def ftp_save_m3u8(self, url):
         data = self.socket_request(url)
@@ -299,14 +300,16 @@ class Ani365QueueEntity(FfmpegQueueEntity):
         try:
             url = 'https://www.jetcloud-list.cc/kr/episode/' + self.info['va']
             scraper = cfscrape.create_scraper(delay=10)
-            text = self.socket_request(url)
+            text = self.socket_request(url)['contents']
             #text = requests.get(url, headers=headers).text
             #logger.warning(text)
             match = re.compile('src\=\"(?P<video_url>http.*?\.m3u8)').search(text)
             if match:
                 tmp = match.group('video_url')
                 logger.warning(tmp)
-                m3u8_text = self.socket_request(tmp)
+                browser = self.socket_request(tmp)
+                m3u8_text = browser['contents']
+                LogicAni365.current_headers['Cookie'] = browser['cookie']
                 #m3u8_text = requests.get(tmp, headers=headers).text.strip()
                 self.url = m3u8_text.split('\n')[-1].strip().replace('</body></html>','')
                 self.url = self.ftp_save_m3u8(self.url)
