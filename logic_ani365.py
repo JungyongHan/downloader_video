@@ -287,7 +287,7 @@ class Ani365QueueEntity(FfmpegQueueEntity):
             data += buf
             
         client_socket.close()
-        return repr(data)
+        return str(data.decode())
 
     def make_episode_info(self):
         try:
