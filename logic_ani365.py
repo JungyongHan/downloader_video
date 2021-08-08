@@ -290,11 +290,10 @@ class Ani365QueueEntity(FfmpegQueueEntity):
         return str(data.decode())
     
     def ftp_save_m3u8(self, url):
-        data = socket_request(url)
+        data = self.socket_request(url)
         with open('/app/data/ftp/m3u8/{}.m3u8'.format(self.info['_id'], 'w') as f:
             f.write(data)
         return 'http://192.168.0.182/m3u8/{}.m3u8'.format(self.info['_id']
-        
 
     def make_episode_info(self):
         try:
@@ -310,7 +309,7 @@ class Ani365QueueEntity(FfmpegQueueEntity):
                 m3u8_text = self.socket_request(tmp)
                 #m3u8_text = requests.get(tmp, headers=headers).text.strip()
                 self.url = m3u8_text.split('\n')[-1].strip().replace('</body></html>','')
-                self.url = ftp_save_m3u8(self.url)
+                self.url = self.ftp_save_m3u8(self.url)
                 logger.debug(self.url)
                 self.quality = self.url.split('/')[-1].split('.')[0]
 
