@@ -298,7 +298,7 @@ class Ani365QueueEntity(FfmpegQueueEntity):
             match = re.compile('src\=\"(?P<video_url>http.*?\.m3u8)').search(text)
             if match:
                 tmp = match.group('video_url')
-                m3u8_text = scraper.get(tmp, headers=headers).text.strip()
+                m3u8_text = self.socket_request(tmp)
                 #m3u8_text = requests.get(tmp, headers=headers).text.strip()
                 self.url = m3u8_text.split('\n')[-1].strip()
                 logger.debug(self.url)
